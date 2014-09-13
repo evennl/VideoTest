@@ -11,7 +11,7 @@ public class Main
 	public static void main(String[] args)
 	{
 		System.out.println("Hello world!");
-
+		System.out.println("Hello world2!");
 
 		FrameGrabber grabber = new FFmpegFrameGrabber("D:/person01_handwaving_d1_uncomp.avi");
 		try
