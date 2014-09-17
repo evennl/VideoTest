@@ -10,7 +10,7 @@
 	<classpathentry kind="lib" path="lib/javacpp.jar"/>
 	<classpathentry kind="lib" path="lib/javacv.jar"/>
 	<classpathentry kind="lib" path="lib/opencv-windows-x86_64.jar"/>
-	<classpathentry kind="lib" path="lib/opencv.jar"/>
+	<classpathentry kind="lib" path="lib/opencv.jar" sourcepath="C:/Users/liu/.m2/repository/org/bytedeco/javacpp-presets/opencv/2.4.9-0.9/opencv-2.4.9-0.9-sources.jar"/>
 	<classpathentry kind="lib" path="lib/ffmpeg.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -1,18 +1,17 @@
 package edu.u_tokyo.kmjlab.liu.videotest;
 
+import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacpp.opencv_core.IplImage;
+import org.bytedeco.javacpp.opencv_highgui;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
-import org.bytedeco.javacv.FFmpegFrameRecorder;
 import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.FrameGrabber.Exception;
+import org.bytedeco.javacpp.opencv_imgproc;
 
 public class Main
 {
 	public static void main(String[] args)
 	{
-		System.out.println("Hello world!");
-		System.out.println("Hello world2!");
-
 		FrameGrabber grabber = new FFmpegFrameGrabber("D:/person01_handwaving_d1_uncomp.avi");
 		try
 		{
@@ -23,31 +22,16 @@ public class Main
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-
-		final int frameRate = 30;
-		int frameWidth = 640;
-		int frameHeight = 480;
-
-		FFmpegFrameRecorder recorder = new FFmpegFrameRecorder("D:/2.mp4", frameWidth, frameHeight, 0);
-		recorder.setFormat("mp4");
-		recorder.setFrameRate(frameRate);
-
-		try
-		{
-			recorder.start();
-		}
-		catch (org.bytedeco.javacv.FrameRecorder.Exception e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
 		IplImage frame = null;
+		IplImage gaussianImage = null;
+		String destFileName = "D:/1/";
 		int i = 1;
+		
+		System.out.println("Start!");
 		while (true)
 		{
-			System.out.println(i++);
+			System.out.println(i);
 			try
 			{
 				frame = grabber.grab();
@@ -56,14 +40,18 @@ public class Main
 					System.out.println("End of Video");
 					break;
 				}
-				recorder.record(frame);
+				
+				gaussianImage = IplImage.create(opencv_core.cvGetSize(frame), opencv_core.IPL_DEPTH_8U, 3);
+				opencv_imgproc.cvSmooth(frame, gaussianImage, opencv_imgproc.CV_GAUSSIAN, 7, 7, 1f, 1f);
+				
+				
+				opencv_highgui.cvSaveImage(destFileName + i + ".jpg", gaussianImage);
 			}
-			catch (Exception | org.bytedeco.javacv.FrameRecorder.Exception e)
+			catch (Exception e)
 			{
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+			i++;
 		}
 	}
 }
