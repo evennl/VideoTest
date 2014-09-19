@@ -26,7 +26,6 @@ public class Main
 			e.printStackTrace();
 		}
 
-		IplImage frame = null;
 		IplImage grayFrame = null;
 		IplImage gaussianImage = null;
 		String destFileName = "D:/1/";
@@ -36,16 +35,11 @@ public class Main
 		
 		System.out.println("Start!");
 		
-		
-		
-		long memory1 = Runtime.getRuntime().freeMemory();
-		
 		while (true)
 		{
-			System.out.println(i);
 			try
 			{
-				frame = grabber.grab();
+				IplImage frame = grabber.grab();
 				if(frame == null)
 				{
 					System.out.println("End of Video");
@@ -59,7 +53,7 @@ public class Main
 				opencv_imgproc.cvSmooth(grayFrame, gaussianImage, opencv_imgproc.CV_GAUSSIAN, 13, 13, 2f, 2f);
 				
 				processImageList.add(gaussianImage);
-				originalImageList.add(frame);
+				originalImageList.add(grayFrame);
 			}
 			catch (Exception e)
 			{
@@ -68,17 +62,14 @@ public class Main
 			i++;
 		}
 		
-		
-		long memory2 = Runtime.getRuntime().freeMemory();
-		System.out.println((memory1 - memory2) / 1024);
-		
-		cuboidResponse(processImageList);
-		findMaxima(processImageList, originalImageList);
+		float[][][] response = cuboidResponse(processImageList);
+		processImageList.clear();
+		findMaxima(response, originalImageList);
 		
 		
 		for(i = 0; i < originalImageList.size(); i++)
 		{
-			opencv_highgui.cvSaveImage(destFileName + i + ".jpg", originalImageList.get(i));
+			opencv_highgui.cvSaveImage(destFileName + i + ".bmp", originalImageList.get(i));
 		}
 	}
 	
@@ -86,7 +77,7 @@ public class Main
 	
 	
 	
-	static private double[] gabor(boolean isEven, double omega)
+	static private double[] getGaborKernel(boolean isEven, double omega)
 	{
 		if(omega <= 0 || omega >= 1)
 		{
@@ -112,16 +103,107 @@ public class Main
 				kernel[i + length] = -Math.sin(2 * Math.PI * omega * i) * Math.exp(-Math.pow(((double)i) / tao, 2));
 			}
 		}
+		
 		return kernel;
 	}
 	
-	static private void cuboidResponse(List<IplImage> gaussianList)
+	static private float[][][] cuboidResponse(List<IplImage> gaussianList)
 	{
+		if(gaussianList == null || gaussianList.size() == 0)
+		{
+			return null;
+		}
+		IplImage firstIamge = gaussianList.get(0);
+		int width = firstIamge.width();
+		int height = firstIamge.height();
+		int length = gaussianList.size();
 		
+		float[][][] response = new float[length][height][width];
+		
+		double[] gaborKernelEven = getGaborKernel(true, 0.9);
+		double[] gaborKernelOdd = getGaborKernel(false, 0.9);
+		int kernelLength = gaborKernelEven.length;
+		
+		for(int i = 0; i < length; i++)
+		{	
+			int imgConvStartIndex = i - kernelLength / 2;
+			int kernelConvStartIndex = imgConvStartIndex < 0 ? -imgConvStartIndex : 0;
+			imgConvStartIndex = imgConvStartIndex < 0 ? 0 : imgConvStartIndex;
+			
+			int imgConvEndIndex = i + kernelLength / 2 + 1;
+			imgConvEndIndex = imgConvEndIndex >= length ? length : imgConvEndIndex;
+			
+			
+			for(int j = 0; j < height; j++)
+			{
+				for(int k = 0; k < width; k++)
+				{
+					double convResultEven = 0;
+					double convResultOdd = 0;
+					int kernelI = kernelConvStartIndex;
+					for(int imgI = imgConvStartIndex; imgI < imgConvEndIndex; imgI++)
+					{
+						byte pixel = gaussianList.get(imgI).arrayData().get(j * width + k);
+						
+						convResultEven += (pixel & 0xFF) * gaborKernelEven[kernelI];
+						convResultOdd += (pixel & 0xFF) * gaborKernelOdd[kernelI++];
+					}
+					response[i][j][k] = (float) (Math.pow(convResultEven, 2) + Math.pow(convResultOdd, 2));
+				}
+			}
+		}
+		return response;
 	}
 	
-	static private void findMaxima(List<IplImage> responseList, List<IplImage> originalList)
+	static private void findMaxima(float[][][] response, List<IplImage> originalList)
 	{
-		
+		int length = response.length;
+		int height = response[0].length;
+		int width = response[0][0].length;
+		for(int i = 1; i < length - 1; i++)
+		{
+			for(int j = 1; j < height - 1; j++)
+			{
+				for(int k = 1; k < width - 1; k++)
+				{
+					float temp = response[i][j][k];
+					if(temp > response[i][j][k - 1] &&
+						temp > response[i][j][k + 1] &&
+						temp > response[i][j - 1][k - 1] &&
+						temp > response[i][j - 1][k] &&
+						temp > response[i][j - 1][k + 1] &&
+						temp > response[i][j + 1][k - 1] &&
+						temp > response[i][j + 1][k] &&
+						temp > response[i][j + 1][k + 1] &&
+						temp > response[i + 1][j + 1][k - 1] &&
+						temp > response[i + 1][j + 1][k] &&
+						temp > response[i + 1][j + 1][k + 1] &&
+						temp > response[i + 1][j - 1][k - 1] &&
+						temp > response[i + 1][j - 1][k] &&
+						temp > response[i + 1][j - 1][k + 1] &&
+						temp > response[i + 1][j][k - 1] &&
+						temp > response[i + 1][j][k] &&
+						temp > response[i + 1][j][k + 1] &&
+						temp > response[i - 1][j - 1][k - 1] &&
+						temp > response[i - 1][j - 1][k] &&
+						temp > response[i - 1][j - 1][k + 1] &&
+						temp > response[i - 1][j + 1][k - 1] &&
+						temp > response[i - 1][j + 1][k] &&
+						temp > response[i - 1][j + 1][k + 1] &&
+						temp > response[i - 1][j][k - 1] &&
+						temp > response[i - 1][j][k] &&
+						temp > response[i - 1][j][k + 1]
+					)
+					{
+						/*
+						originalList.get(i).arrayData().put((width * j + k) * 3, (byte) 0);
+						originalList.get(i).arrayData().put((width * j + k) * 3 + 1, (byte) 0);
+						originalList.get(i).arrayData().put((width * j + k) * 3 + 2, (byte) 255);
+						*/
+						originalList.get(i).arrayData().put(j * width + k, (byte) 0);
+					}
+				}
+			}
+		}
 	}
 }
