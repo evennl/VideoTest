@@ -15,7 +15,8 @@ public class Main
 {
 	public static void main(String[] args)
 	{
-		FrameGrabber grabber = new FFmpegFrameGrabber("D:/person01_handwaving_d1_uncomp.avi");
+		
+		FrameGrabber grabber = new FFmpegFrameGrabber("D:/test/person01_handwaving_d1_uncomp.avi");
 		try
 		{
 			grabber.start();
@@ -25,6 +26,7 @@ public class Main
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 
 		IplImage grayFrame = null;
 		IplImage gaussianImage = null;
@@ -34,6 +36,27 @@ public class Main
 		List<IplImage> originalImageList = new ArrayList<IplImage> ();
 		
 		System.out.println("Start!");
+		
+		/*
+		String path = "D:/test/img2/";
+		File dir = new File(path);
+		String[] fileNames = dir.list();
+		
+		for(String fileName : fileNames)
+		{
+			IplImage image = opencv_highgui.cvLoadImage(path + fileName);
+			
+			grayFrame = IplImage.create(opencv_core.cvGetSize(image), opencv_core.IPL_DEPTH_8U, 1);
+			opencv_imgproc.cvCvtColor(image, grayFrame, opencv_imgproc.CV_BGR2GRAY);
+			
+			gaussianImage = IplImage.create(opencv_core.cvGetSize(grayFrame), opencv_core.IPL_DEPTH_8U, 1);
+			opencv_imgproc.cvSmooth(grayFrame, gaussianImage, opencv_imgproc.CV_GAUSSIAN, 13, 13, 2f, 2f);
+			
+			processImageList.add(gaussianImage);
+			originalImageList.add(grayFrame);
+		}
+		*/
+		
 		
 		while (true)
 		{
@@ -53,7 +76,8 @@ public class Main
 				opencv_imgproc.cvSmooth(grayFrame, gaussianImage, opencv_imgproc.CV_GAUSSIAN, 13, 13, 2f, 2f);
 				
 				processImageList.add(gaussianImage);
-				originalImageList.add(grayFrame);
+				originalImageList.add(opencv_core.cvCloneImage(frame));
+				grayFrame = null;
 			}
 			catch (Exception e)
 			{
@@ -61,6 +85,7 @@ public class Main
 			}
 			i++;
 		}
+		
 		
 		float[][][] response = cuboidResponse(processImageList);
 		processImageList.clear();
@@ -192,15 +217,20 @@ public class Main
 						temp > response[i - 1][j + 1][k + 1] &&
 						temp > response[i - 1][j][k - 1] &&
 						temp > response[i - 1][j][k] &&
-						temp > response[i - 1][j][k + 1]
+						temp > response[i - 1][j][k + 1] &&
+						originalList.get(i - 1).arrayData().get((j * width + k) * 3) != originalList.get(i).arrayData().get((j * width + k) * 3) &&
+						originalList.get(i + 1).arrayData().get((j * width + k) * 3) != originalList.get(i).arrayData().get((j * width + k) * 3) &&
+						originalList.get(i - 1).arrayData().get((j * width + k) * 3 + 1) != originalList.get(i).arrayData().get((j * width + k) * 3 + 1) &&
+						originalList.get(i + 1).arrayData().get((j * width + k) * 3 + 1) != originalList.get(i).arrayData().get((j * width + k) * 3 + 1) &&
+						originalList.get(i - 1).arrayData().get((j * width + k) * 3 + 2) != originalList.get(i).arrayData().get((j * width + k) * 3 + 2) &&
+						originalList.get(i + 1).arrayData().get((j * width + k) * 3 + 2) != originalList.get(i).arrayData().get((j * width + k) * 3 + 2)
 					)
 					{
-						/*
-						originalList.get(i).arrayData().put((width * j + k) * 3, (byte) 0);
-						originalList.get(i).arrayData().put((width * j + k) * 3 + 1, (byte) 0);
-						originalList.get(i).arrayData().put((width * j + k) * 3 + 2, (byte) 255);
-						*/
-						originalList.get(i).arrayData().put(j * width + k, (byte) 0);
+						originalList.get(i).arrayData().put((j * width + k) * 3, (byte) 0);
+						originalList.get(i).arrayData().put((j * width + k) * 3 + 1, (byte) 0);
+						originalList.get(i).arrayData().put((j * width + k) * 3 + 2, (byte) 255);
+						
+						//originalList.get(i).arrayData().put(j * width + k, (byte) 0);
 					}
 				}
 			}
