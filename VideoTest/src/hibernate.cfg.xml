@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+	"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+	"http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+	<!--
+		Copyright(C) 2008 - 2009 Augmentum,Inc. All Rights Reserved. THIS IS
+		UNPUBLISHED PROPRIETARY SOURCE CODE OF Augmentum,Inc. The copyright
+		notice above does not evidence any actual or intended publication of
+		such source code.
+	-->
+	<!--
+		Jan 9, 2009, add ToDo mapping. Jan 14, 2009, add XmlConfiguration
+		mapping.
+	-->
+<hibernate-configuration>
+	<session-factory>
+		<property name="myeclipse.connection.profile">LIU_DEV</property>
+		<property name="connection.url">
+			jdbc:mysql://localhost:3306/kmjlab
+		</property>
+		<property name="connection.username">root</property>
+		<property name="connection.password">123qwe</property>
+		<property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+		<property name="dialect">org.hibernate.dialect.MySQLDialect</property>
+		<property name="show_sql">true</property>
+		<property name="hibernate.connection.provider_class">
+			org.hibernate.connection.C3P0ConnectionProvider
+		</property>
+		<property name="hibernate.connection.release_mode">after_transaction</property>
+		<property name="hibernate.c3p0.max_size">10</property>
+		<property name="hibernate.c3p0.min_size">1</property>
+		<property name="hibernate.c3p0.timeout">120</property>
+		<property name="hibernate.c3p0.max_statements">500</property>
+		<property name="hibernate.c3p0.idle_test_period">1200</property>
+		<property name="hibernate.c3p0.acquire_increment">2</property>
+		<property name="hibernate.c3p0.validate">true</property>
+
+		<mapping resource="com/zte/cmc/model/audit/AuditRule.hbm.xml" />
+	</session-factory>
+</hibernate-configuration>
