@@ -6,7 +6,7 @@ import java.util.Date;
  * CuboidFeatures entity. @author MyEclipse Persistence Tools
  */
 
-public class CuboidFeatures
+public class CuboidFeature
 {
 	private Integer id;
 	private String videoName;
@@ -15,18 +15,22 @@ public class CuboidFeatures
 	private Integer length;
 	private String descriptor;
 	private Integer type;
-	private Date timestamp;
+	private Date createTime;
+	private Float param1;			// Gaussian sigma
+	private Float param2;			// Gabor tao
+	private Float param3;			// blank now
 
 	// Constructors
 
 	/** default constructor */
-	public CuboidFeatures()
+	public CuboidFeature()
 	{
 	}
 
 	/** full constructor */
-	public CuboidFeatures(Integer id, String videoName, Integer width, Integer height,
-			Integer length, String descriptor, Integer type, Date timestamp)
+	public CuboidFeature(Integer id, String videoName, Integer width, Integer height,
+			Integer length, String descriptor, Integer type,
+			Date createTime, Float param1, Float param2, Float param3)
 	{
 		this.id = id;
 		this.videoName = videoName;
@@ -35,7 +39,10 @@ public class CuboidFeatures
 		this.length = length;
 		this.descriptor = descriptor;
 		this.type = type;
-		this.timestamp = timestamp;
+		this.createTime = createTime;
+		this.param1 = param1;
+		this.param2 = param2;
+		this.param3 = param3;
 	}
 
 	// Property accessors
@@ -110,14 +117,44 @@ public class CuboidFeatures
 		this.type = type;
 	}
 
-	public Date getTimestamp()
+	public Date getCreateTime()
 	{
-		return this.timestamp;
+		return this.createTime;
 	}
 
-	public void setTimestamp(Date timestamp)
+	public void setCreateTime(Date createTime)
 	{
-		this.timestamp = timestamp;
+		this.createTime = createTime;
+	}
+
+	public Float getParam1()
+	{
+		return this.param1;
+	}
+
+	public void setParam1(Float param1)
+	{
+		this.param1 = param1;
+	}
+
+	public Float getParam2()
+	{
+		return this.param2;
+	}
+
+	public void setParam2(Float param2)
+	{
+		this.param2 = param2;
+	}
+
+	public Float getParam3()
+	{
+		return this.param3;
+	}
+
+	public void setParam3(Float param3)
+	{
+		this.param3 = param3;
 	}
 
 }

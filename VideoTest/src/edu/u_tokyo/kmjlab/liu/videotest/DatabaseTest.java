@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import edu.u_tokyo.kmjlab.liu.business.features.CuboidBu;
-import edu.u_tokyo.kmjlab.liu.model.features.CuboidFeatures;
+import edu.u_tokyo.kmjlab.liu.model.features.CuboidFeature;
 
 public class DatabaseTest
 {
@@ -13,7 +13,7 @@ public class DatabaseTest
 		CuboidBu cuboidBu = new CuboidBu();
 		//CuboidFeatures cuboid = new CuboidFeatures(null, "test", 1, 2, 3, "22222222", null, new Date());
 		//cuboidBu.save(cuboid);
-		List<CuboidFeatures> list = cuboidBu.listByTime("2014-09-27", null);
+		List<CuboidFeature> list = cuboidBu.listByTime("2014-09-27", null);
 		System.out.println(list.size());
 		
 		list = cuboidBu.listByTime("2014-09-29", null);

@@ -8,21 +8,21 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 
 import edu.u_tokyo.kmjlab.liu.base.business.BaseBusiness;
-import edu.u_tokyo.kmjlab.liu.model.features.CuboidFeatures;
+import edu.u_tokyo.kmjlab.liu.model.features.CuboidFeature;
 import edu.u_tokyo.kmjlab.liu.util.CommonUtils;
 
-public class CuboidBu extends BaseBusiness<CuboidFeatures>
+public class CuboidBu extends BaseBusiness<CuboidFeature>
 {
 	public CuboidBu()
 	{
-		super(new CuboidFeatures());
+		super(new CuboidFeature());
 	}
 	
-	public List<CuboidFeatures> listByVideoName(String videoName)
+	public List<CuboidFeature> listByVideoName(String videoName)
 	{
 		if(videoName == null)
 		{
-			return new ArrayList<CuboidFeatures> ();
+			return new ArrayList<CuboidFeature> ();
 		}
 		Criteria criteria = basePer.getNewCriteria();
 		criteria.add(Restrictions.eq("videoName", videoName));
@@ -32,11 +32,11 @@ public class CuboidBu extends BaseBusiness<CuboidFeatures>
 	
 	
 	
-	public List<CuboidFeatures> listByTime(String startTime, String endTime)
+	public List<CuboidFeature> listByTime(String startTime, String endTime)
 	{
 		if(startTime == null && endTime == null)
 		{
-			return new ArrayList<CuboidFeatures> ();
+			return new ArrayList<CuboidFeature> ();
 		}
 		else
 		{
@@ -46,7 +46,7 @@ public class CuboidBu extends BaseBusiness<CuboidFeatures>
 				Date date = CommonUtils.String2Date(startTime + " 00:00:00");
 				if(date == null)
 				{
-					return new ArrayList<CuboidFeatures> ();
+					return new ArrayList<CuboidFeature> ();
 				}
 				criteria.add(Restrictions.ge("timestamp", date));
 			}
@@ -55,7 +55,7 @@ public class CuboidBu extends BaseBusiness<CuboidFeatures>
 				Date date = CommonUtils.String2Date(endTime + " 23:59:59");
 				if(date == null)
 				{
-					return new ArrayList<CuboidFeatures> ();
+					return new ArrayList<CuboidFeature> ();
 				}
 				criteria.add(Restrictions.le("timestamp", date));
 			}
