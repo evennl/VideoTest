@@ -1,10 +1,15 @@
 package edu.u_tokyo.kmjlab.liu.videotest;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
 import org.bytedeco.javacpp.opencv_core;
+import org.bytedeco.javacpp.opencv_highgui;
 import org.bytedeco.javacpp.opencv_imgproc;
 import org.bytedeco.javacpp.opencv_core.IplImage;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
@@ -16,13 +21,12 @@ import edu.u_tokyo.kmjlab.liu.model.features.CuboidFeature;
 
 public class Cuboid
 {
-	public void extractCuboidFeatures(String videoFullFileName, float gaussianSigma, float gaborTao)
+	public void extractCuboidFeaturesFromVideo(String videoFullFileName, float gaussianSigma, float gaborTao)
 	{
 		if(videoFullFileName == null || gaussianSigma <= 0 || gaborTao <= 0 || gaborTao >= 1)
 		{
 			return;
 		}
-		
 		
 		FrameGrabber grabber = new FFmpegFrameGrabber(videoFullFileName);
 		try
@@ -38,8 +42,6 @@ public class Cuboid
 
 		IplImage grayFrame = null;
 		IplImage gaussianImage = null;
-		
-		int i = 1;
 		List<IplImage> processImageList = new ArrayList<IplImage> ();
 
 		while (true)
@@ -65,17 +67,68 @@ public class Cuboid
 			{
 				e.printStackTrace();
 			}
-			i++;
 		}
 		
-		float[][][] response = cuboidResponse(processImageList, gaborTao);
-		processImageList.clear();
+		extractCuboidFeaturesFromIplImage(processImageList, gaussianSigma, gaborTao, videoFullFileName);
+	}
+	
+	public void extractCuboidFeaturesFromBmp(String bmpDir, float gaussianSigma, float gaborTao)
+	{
+		if(bmpDir == null || gaussianSigma <= 0 || gaborTao <= 0 || gaborTao >= 1)
+		{
+			return;
+		}
+		File dir = new File(bmpDir);
+		if(!dir.exists() || !dir.isDirectory())
+		{
+			return;
+		}
+		if(!bmpDir.endsWith("/") && !bmpDir.endsWith("\\"))
+		{
+			bmpDir = bmpDir + "\\";
+		}
+		bmpDir = bmpDir.replace('/', '\\');
+		
+		List<String> fileNameList = Arrays.asList(dir.list(new BmpFilter()));
+		Collections.sort(fileNameList, new Comparator<String>()
+		{
+		    @Override
+		    public int compare(String fileName1, String fileName2)
+		    {
+		        return fileName1.toLowerCase().compareTo(fileName2.toLowerCase());
+		    }
+		});
+		
+		IplImage grayFrame = null;
+		IplImage gaussianImage = null;
+		List<IplImage> processImageList = new ArrayList<IplImage> ();
+		for(String fileName : fileNameList)
+		{
+			IplImage image = opencv_highgui.cvLoadImage(bmpDir + fileName);
+			
+			grayFrame = IplImage.create(opencv_core.cvGetSize(image), opencv_core.IPL_DEPTH_8U, 1);
+			opencv_imgproc.cvCvtColor(image, grayFrame, opencv_imgproc.CV_BGR2GRAY);
+			
+			gaussianImage = IplImage.create(opencv_core.cvGetSize(image), opencv_core.IPL_DEPTH_8U, 1);
+			opencv_imgproc.cvSmooth(grayFrame, gaussianImage, opencv_imgproc.CV_GAUSSIAN, 0, 0, gaussianSigma, gaussianSigma);
+			
+			processImageList.add(gaussianImage);
+			grayFrame = null;
+		}
+		
+		extractCuboidFeaturesFromIplImage(processImageList, gaussianSigma, gaborTao, bmpDir);
+	}
+	
+	private void extractCuboidFeaturesFromIplImage(List<IplImage> list, float gaussianSigma, float gaborTao, String videoFullFileName)
+	{
+		float[][][] response = cuboidResponse(list, gaborTao);
+		list.clear();
 		List<int[]> maximaPosition = findMaxima(response);
 		response = null;
 		
 		CuboidBu cuboidBu = new CuboidBu();
 		List<CuboidFeature> cuboidList = new ArrayList<CuboidFeature> ();
-		i = 0;
+		int i = 0;
 		for(int[] position : maximaPosition)
 		{
 			CuboidFeature cuboidFeature = new CuboidFeature();
@@ -101,7 +154,6 @@ public class Cuboid
 			cuboidBu.bulkSave(cuboidList);
 		}
 	}
-	
 	
 	private float[][][] cuboidResponse(List<IplImage> gaussianList, double tao)
 	{
@@ -180,7 +232,6 @@ public class Cuboid
 		
 		return kernel;
 	}
-	
 	
 	private List<int[]> findMaxima(float[][][] response)
 	{

@@ -5,7 +5,10 @@ import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.Transformers;
 
 import edu.u_tokyo.kmjlab.liu.base.business.BaseBusiness;
 import edu.u_tokyo.kmjlab.liu.model.features.CuboidFeature;
@@ -28,9 +31,6 @@ public class CuboidBu extends BaseBusiness<CuboidFeature>
 		criteria.add(Restrictions.eq("videoName", videoName));
 		return basePer.getList(criteria);
 	}
-	
-	
-	
 	
 	public List<CuboidFeature> listByTime(String startTime, String endTime)
 	{
@@ -61,5 +61,21 @@ public class CuboidBu extends BaseBusiness<CuboidFeature>
 			}
 			return basePer.getList(criteria);
 		}
+	}
+	
+	public List<CuboidFeature> listByFrame(String videoName, int frameNumber)
+	{
+		Criteria criteria = basePer.getNewCriteria();
+		criteria.add(Restrictions.eq("videoName", videoName));
+		criteria.add(Restrictions.eq("length", frameNumber));
+		
+		ProjectionList projectionList = Projections.projectionList();
+		projectionList.add(Projections.property("width"), "width");
+		projectionList.add(Projections.property("height"), "height");
+		
+		criteria.setProjection(projectionList);
+		criteria.setResultTransformer(Transformers.aliasToBean(CuboidFeature.class));
+		
+		return basePer.getList(criteria); 
 	}
 }
