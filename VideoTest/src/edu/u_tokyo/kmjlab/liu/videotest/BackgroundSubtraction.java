@@ -85,7 +85,7 @@ public class BackgroundSubtraction
         			break;
         		}
         		CvRect boundbox = opencv_imgproc.cvBoundingRect(ptr, 0);
-        		if(boundbox.width() * boundbox.y() > 3000)
+        		if(boundbox.width() * boundbox.height() > 900)
         		{
         			System.out.println("x : " + boundbox.x() + " ~ " + (boundbox.x() + boundbox.width() + 1) + " y : " + boundbox.y() + " ~ " + (boundbox.y() + boundbox.height() + 1));
         			
@@ -97,8 +97,9 @@ public class BackgroundSubtraction
                     opencv_core.cvPutText(grabbedImage, "0",
                     		opencv_core.cvPoint(boundbox.x(), boundbox.y()), font, opencv_core.CvScalar.RED);
         		}
-        		opencv_highgui.cvSaveImage("D:\\test\\jouon_01_rect\\" + i + ".bmp", grabbedImage);
         	}
+        	opencv_highgui.cvSaveImage("D:\\test\\jouon_01_rect\\" + i + ".bmp", grabbedImage);
+        	
         	System.out.println();
              
         	try
