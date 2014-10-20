@@ -63,15 +63,15 @@ public class CuboidBu extends BaseBusiness<CuboidFeature>
 		}
 	}
 	
-	public List<CuboidFeature> listByFrame(String videoName, int frameNumber)
+	public List<CuboidFeature> listByFrame(Integer videoId, int frameNumber)
 	{
 		Criteria criteria = basePer.getNewCriteria();
-		criteria.add(Restrictions.eq("videoName", videoName));
-		criteria.add(Restrictions.eq("length", frameNumber));
+		criteria.add(Restrictions.eq("videoId", videoId));
+		criteria.add(Restrictions.eq("positionFrame", frameNumber));
 		
 		ProjectionList projectionList = Projections.projectionList();
-		projectionList.add(Projections.property("width"), "width");
-		projectionList.add(Projections.property("height"), "height");
+		projectionList.add(Projections.property("positionX"), "positionX");
+		projectionList.add(Projections.property("positionY"), "positionY");
 		
 		criteria.setProjection(projectionList);
 		criteria.setResultTransformer(Transformers.aliasToBean(CuboidFeature.class));

@@ -24,14 +24,21 @@ public class Main
 		final float gaborTao = 0.9f;
 		
 		String bmpDir = "D:/cuts/Take directly_ENV01_end_01_3851_3902_resize/";
-		//String videoFullFileName = "D:/test/jouon_01.avi";
+		String videoFullFileName = "D:/test/jouon_01.avi";
+		
+		File file = new File(bmpDir);
+		System.out.println(VideoNameList.getId("ENV03_04"));
+		
+		
 		
 		//videoToBmp(videoFullFileName, bmpDir);
 		//Cuboid cuboid = new Cuboid();
 		//cuboid.extractCuboidFeaturesFromVideo(videoFullFileName, gaussianSigma, gaborTao);
 		//cuboid.extractCuboidFeaturesFromBmp(bmpDir, gaussianSigma, gaborTao);
 		
-		addMarkToBmp("D:\\cuts\\Take directly_ENV01_end_01_3851_3902_resize\\", "D:\\cuts\\Take directly_ENV01_end_01_3851_3902_resize\\", "D:\\cuts\\Take directly_ENV01_end_01_3851_3902_resize_mark\\");
+		File bmpDirSrc = new File("D:\\cuts\\Take directly_ENV01_end_01_3851_3902_resize\\");
+		File bmpDirDst = new File("D:\\cuts\\Take directly_ENV01_end_01_3851_3902_resize_mark\\");
+		//addMarkToBmp(bmpDirSrc, bmpDirDst);
 	}
 	
 	
@@ -87,34 +94,19 @@ public class Main
 		closeGrabber(grabber);
 	}
 	
-	static private void addMarkToBmp(String videoName, String bmpDirSrc, String bmpDirDst)
+	static private void addMarkToBmp(File bmpDirSrc, File bmpDirDst)
 	{
-		if(bmpDirSrc == null || videoName == null || bmpDirDst == null)
-		{
-			return;
-		}
-		File dirSrc = new File(bmpDirSrc);
-		if(!dirSrc.exists() || !dirSrc.isDirectory())
+		if(bmpDirSrc == null || !bmpDirSrc.exists() || !bmpDirSrc.isDirectory() || bmpDirDst == null || !bmpDirDst.isDirectory() )
 		{
 			return;
 		}
 		
-		if(!bmpDirSrc.endsWith("/") && !bmpDirSrc.endsWith("\\"))
+		if(!bmpDirDst.exists())
 		{
-			bmpDirSrc = bmpDirSrc + "/";
-		}
-		if(!bmpDirDst.endsWith("/") && !bmpDirDst.endsWith("\\"))
-		{
-			bmpDirDst = bmpDirDst + "/";
+			bmpDirDst.mkdirs();
 		}
 		
-		File dirDst = new File(bmpDirDst);
-		if(!dirDst.exists())
-		{
-			dirDst.mkdirs();
-		}
-		
-		List<String> fileNameList = Arrays.asList(dirSrc.list(new BmpFilter()));
+		List<String> fileNameList = Arrays.asList(bmpDirSrc.list(new BmpFilter()));
 		Collections.sort(fileNameList, new Comparator<String>()
 		{
 		    @Override
@@ -124,10 +116,11 @@ public class Main
 		    }
 		});
 		
-		
-		IplImage firstImage = opencv_highgui.cvLoadImage(bmpDirSrc + fileNameList.get(0));
+		String bmpSrcPath = bmpDirSrc.getAbsolutePath() + "\\";
+		String bmpDstPath = bmpDirDst.getAbsolutePath() + "\\";
+		IplImage firstImage = opencv_highgui.cvLoadImage(bmpSrcPath + fileNameList.get(0));
 		int width = firstImage.width();
-		opencv_highgui.cvSaveImage(bmpDirDst + fileNameList.get(0), firstImage);
+		opencv_highgui.cvSaveImage(bmpDstPath + fileNameList.get(0), firstImage);
 		
 		
 		int i = 1;
@@ -137,26 +130,27 @@ public class Main
 		
 		
 		CuboidBu cuboidBu = new CuboidBu();
+		Integer videoId = VideoNameList.getId(bmpDirSrc.getName());
 		for(i = 1; i < length; i++)
 		{
 			String fileName = fileNameList.get(i);
-			IplImage image = opencv_highgui.cvLoadImage(bmpDirSrc + fileName);
+			IplImage image = opencv_highgui.cvLoadImage(bmpSrcPath + fileName);
 			
 			int frameNumber = Integer.parseInt(fileName.split("\\.")[0]);
-			List<CuboidFeature> list = cuboidBu.listByFrame(videoName, frameNumber);
+			List<CuboidFeature> list = cuboidBu.listByFrame(videoId, frameNumber);
 			
 			if(list != null && list.size() > 0)
 			{
 				BytePointer bp = image.arrayData();
 				for(CuboidFeature feature : list)
 				{
-					int index = ((feature.getHeight() - 1) * width + feature.getWidth() - 1) * 3;
+					int index = ((feature.getPositionY() - 1) * width + feature.getPositionX() - 1) * 3;
 					bp.put(index, b0);
 					bp.put(index + 1, b0);
 					bp.put(index + 2, b255);
 				}
 			}
-			opencv_highgui.cvSaveImage(bmpDirDst + fileName, image);
+			opencv_highgui.cvSaveImage(bmpDstPath + fileName, image);
 		}
 	}
 	

@@ -3,22 +3,20 @@ package edu.u_tokyo.kmjlab.liu.model.features;
 import java.util.Date;
 
 /**
- * CuboidFeatures entity. @author MyEclipse Persistence Tools
+ * CuboidFeature entity. @author MyEclipse Persistence Tools
  */
 
 public class CuboidFeature
 {
 	private Integer id;
-	private String videoName;
-	private Integer width;
-	private Integer height;
-	private Integer length;
+	private Integer videoId;
+	private Integer positionX;
+	private Integer positionY;
+	private Integer positionFrame;
 	private String descriptor;
-	private Integer type;
 	private Date createTime;
-	private Float param1;			// Gaussian sigma
-	private Float param2;			// Gabor tao
-	private Float param3;			// blank now
+	private Float sigma;
+	private Float tao;
 
 	// Constructors
 
@@ -28,21 +26,18 @@ public class CuboidFeature
 	}
 
 	/** full constructor */
-	public CuboidFeature(Integer id, String videoName, Integer width, Integer height,
-			Integer length, String descriptor, Integer type,
-			Date createTime, Float param1, Float param2, Float param3)
+	public CuboidFeature(Integer videoId, Integer positionX, Integer positionY,
+			Integer positionFrame, String descriptor, Date createTime,
+			Float sigma, Float tao)
 	{
-		this.id = id;
-		this.videoName = videoName;
-		this.width = width;
-		this.height = height;
-		this.length = length;
+		this.videoId = videoId;
+		this.positionX = positionX;
+		this.positionY = positionY;
+		this.positionFrame = positionFrame;
 		this.descriptor = descriptor;
-		this.type = type;
 		this.createTime = createTime;
-		this.param1 = param1;
-		this.param2 = param2;
-		this.param3 = param3;
+		this.sigma = sigma;
+		this.tao = tao;
 	}
 
 	// Property accessors
@@ -57,44 +52,44 @@ public class CuboidFeature
 		this.id = id;
 	}
 
-	public String getVideoName()
+	public Integer getVideoId()
 	{
-		return this.videoName;
+		return this.videoId;
 	}
 
-	public void setVideoName(String videoName)
+	public void setVideoId(Integer videoId)
 	{
-		this.videoName = videoName;
+		this.videoId = videoId;
 	}
 
-	public Integer getWidth()
+	public Integer getPositionX()
 	{
-		return this.width;
+		return this.positionX;
 	}
 
-	public void setWidth(Integer width)
+	public void setPositionX(Integer positionX)
 	{
-		this.width = width;
+		this.positionX = positionX;
 	}
 
-	public Integer getHeight()
+	public Integer getPositionY()
 	{
-		return this.height;
+		return this.positionY;
 	}
 
-	public void setHeight(Integer height)
+	public void setPositionY(Integer positionY)
 	{
-		this.height = height;
+		this.positionY = positionY;
 	}
 
-	public Integer getLength()
+	public Integer getPositionFrame()
 	{
-		return this.length;
+		return this.positionFrame;
 	}
 
-	public void setLength(Integer length)
+	public void setPositionFrame(Integer positionFrame)
 	{
-		this.length = length;
+		this.positionFrame = positionFrame;
 	}
 
 	public String getDescriptor()
@@ -107,16 +102,6 @@ public class CuboidFeature
 		this.descriptor = descriptor;
 	}
 
-	public Integer getType()
-	{
-		return this.type;
-	}
-
-	public void setType(Integer type)
-	{
-		this.type = type;
-	}
-
 	public Date getCreateTime()
 	{
 		return this.createTime;
@@ -127,34 +112,24 @@ public class CuboidFeature
 		this.createTime = createTime;
 	}
 
-	public Float getParam1()
+	public Float getSigma()
 	{
-		return this.param1;
+		return this.sigma;
 	}
 
-	public void setParam1(Float param1)
+	public void setSigma(Float sigma)
 	{
-		this.param1 = param1;
+		this.sigma = sigma;
 	}
 
-	public Float getParam2()
+	public Float getTao()
 	{
-		return this.param2;
+		return this.tao;
 	}
 
-	public void setParam2(Float param2)
+	public void setTao(Float tao)
 	{
-		this.param2 = param2;
-	}
-
-	public Float getParam3()
-	{
-		return this.param3;
-	}
-
-	public void setParam3(Float param3)
-	{
-		this.param3 = param3;
+		this.tao = tao;
 	}
 
 }

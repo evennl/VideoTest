@@ -10,40 +10,32 @@
             <column name="ID" />
             <generator class="identity" />
         </id>
-        <property name="videoName" type="java.lang.String">
-            <column name="VIDEO_NAME" length="127" />
+        <property name="videoId" type="java.lang.Integer">
+            <column name="VIDEO_ID" />
         </property>
-        <property name="width" type="java.lang.Integer">
-            <column name="WIDTH" />
+        <property name="positionX" type="java.lang.Integer">
+            <column name="POSITION_X" />
         </property>
-        <property name="height" type="java.lang.Integer">
-            <column name="HEIGHT" />
+        <property name="positionY" type="java.lang.Integer">
+            <column name="POSITION_Y" />
         </property>
-        <property name="length" type="java.lang.Integer">
-            <column name="LENGTH" />
+        <property name="positionFrame" type="java.lang.Integer">
+            <column name="POSITION_FRAME" />
         </property>
         <property name="descriptor" type="java.lang.String">
             <column name="DESCRIPTOR" length="1024" />
         </property>
-        <property name="type" type="java.lang.Integer">
-            <column name="TYPE" />
-        </property>
         <property name="createTime" type="java.util.Date">
             <column name="CREATE_TIME" length="19" />
         </property>
-        <property name="param1" type="java.lang.Float">
-            <column name="PARAM1" precision="12" scale="0">
+        <property name="sigma" type="java.lang.Float">
+            <column name="SIGMA" precision="12" scale="0">
                 <comment>Gassian Sigma</comment>
             </column>
         </property>
-        <property name="param2" type="java.lang.Float">
-            <column name="PARAM2" precision="12" scale="0">
+        <property name="tao" type="java.lang.Float">
+            <column name="TAO" precision="12" scale="0">
                 <comment>Gabor tao</comment>
-            </column>
-        </property>
-        <property name="param3" type="java.lang.Float">
-            <column name="PARAM3" precision="12" scale="0">
-                <comment>blank now</comment>
             </column>
         </property>
     </class>

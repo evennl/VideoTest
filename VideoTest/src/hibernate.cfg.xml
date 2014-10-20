@@ -47,5 +47,9 @@
 
 		<mapping
 			resource="edu/u_tokyo/kmjlab/liu/model/features/CuboidFeature.hbm.xml" />
+		<mapping
+			resource="edu/u_tokyo/kmjlab/liu/model/features/Roi.hbm.xml" />
+		<mapping
+			resource="edu/u_tokyo/kmjlab/liu/model/features/VideoName.hbm.xml" />
 	</session-factory>
 </hibernate-configuration>
