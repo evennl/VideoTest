@@ -41,7 +41,7 @@ public class VideoNameList
 		for(VideoName videoName : videoNameList)
 		{
 			String vName = videoName.getVideoName();
-			if(vName != null && vName.equals(name))
+			if(vName != null && name.startsWith(vName))
 			{
 				return videoName.getId();
 			}

@@ -20,25 +20,25 @@ public class Main
 {
 	public static void main(String[] args)
 	{
-		final float gaussianSigma = 2f;
-		final float gaborTao = 0.9f;
+		final float gaussianSigma = 3f;
+		final float gaborOmega = 0.9f;
 		
-		String bmpDir = "D:/cuts/Take directly_ENV01_end_01_3851_3902_resize/";
-		String videoFullFileName = "D:/test/jouon_01.avi";
+		//String bmpDir = "D:/test/test01/";
+		String bmpDir = "D:/cuts/jouon_08_44_06_44_15_resize/";
+		//String videoFullFileName = "D:/cuts/jouon_08_44_06_44_15.ts";
 		
 		File file = new File(bmpDir);
-		System.out.println(VideoNameList.getId("ENV03_04"));
 		
 		
 		
 		//videoToBmp(videoFullFileName, bmpDir);
-		//Cuboid cuboid = new Cuboid();
-		//cuboid.extractCuboidFeaturesFromVideo(videoFullFileName, gaussianSigma, gaborTao);
-		//cuboid.extractCuboidFeaturesFromBmp(bmpDir, gaussianSigma, gaborTao);
+		Cuboid cuboid = new Cuboid();
+		//cuboid.extractCuboidFeaturesFromVideo(videoFullFileName, gaussianSigma, gaborOmega);
+		cuboid.extractCuboidFeaturesFromBmp(file, gaussianSigma, gaborOmega);
 		
-		File bmpDirSrc = new File("D:\\cuts\\Take directly_ENV01_end_01_3851_3902_resize\\");
-		File bmpDirDst = new File("D:\\cuts\\Take directly_ENV01_end_01_3851_3902_resize_mark\\");
-		//addMarkToBmp(bmpDirSrc, bmpDirDst);
+		//File bmpDirDst = new File("D:/test/test01_mark/");
+		File bmpDirDst = new File("D:/cuts/jouon_08_44_06_44_15_resize_remark/");
+		addMarkToBmp(file, bmpDirDst);
 	}
 	
 	
@@ -96,7 +96,7 @@ public class Main
 	
 	static private void addMarkToBmp(File bmpDirSrc, File bmpDirDst)
 	{
-		if(bmpDirSrc == null || !bmpDirSrc.exists() || !bmpDirSrc.isDirectory() || bmpDirDst == null || !bmpDirDst.isDirectory() )
+		if(bmpDirSrc == null || !bmpDirSrc.exists() || !bmpDirSrc.isDirectory() || bmpDirDst == null)
 		{
 			return;
 		}
@@ -104,6 +104,10 @@ public class Main
 		if(!bmpDirDst.exists())
 		{
 			bmpDirDst.mkdirs();
+		}
+		if(!bmpDirDst.isDirectory())
+		{
+			return;
 		}
 		
 		List<String> fileNameList = Arrays.asList(bmpDirSrc.list(new BmpFilter()));

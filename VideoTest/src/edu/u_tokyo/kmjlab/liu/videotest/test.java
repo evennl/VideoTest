@@ -29,15 +29,15 @@ public class test
             //Loader.load(opencv_objdetect.class);
             CvMemStorage storage = CvMemStorage.create();
             CanvasFrame frameInput = new CanvasFrame("Original");
-            CanvasFrame frameOutput = new CanvasFrame("Foregroung");
-            File f = new File("D:\\test\\jouon_01.avi");
+            CanvasFrame frameOutput = new CanvasFrame("Foreground");
+            File f = new File("D:\\cuts\\jouon_04_27_03_27_10.ts");
             FrameGrabber grabber = new OpenCVFrameGrabber(f);
             grabber.start();
             IplImage grabbedImage = grabber.grab();
             grabber.start();
 
             IplImage foreground = null;
-            BackgroundSubtractorMOG2 mog = new BackgroundSubtractorMOG2(30, 40, false);
+            BackgroundSubtractorMOG2 mog = new BackgroundSubtractorMOG2(200, 40, false);
             IplImage frame = grabbedImage.clone();
 
             int i = 1;
@@ -59,7 +59,7 @@ public class test
 
                     // morph. schliessen
                     opencv_imgproc.cvDilate(foreground, foreground, null, 5);
-                    opencv_imgproc.cvErode(foreground, foreground, null, 6);
+                    opencv_imgproc.cvErode(foreground, foreground, null, 8);
                     opencv_imgproc.cvSmooth(foreground, foreground, opencv_imgproc.CV_MEDIAN, 3, 3, 2, 2);
                     opencv_imgproc.cvFindContours(foreground, storage, contour,
                                     Loader.sizeof(CvContour.class), opencv_imgproc.CV_RETR_LIST,

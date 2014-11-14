@@ -21,9 +21,9 @@ import edu.u_tokyo.kmjlab.liu.model.features.CuboidFeature;
 
 public class Cuboid
 {
-	public void extractCuboidFeaturesFromVideo(File videoFile, float gaussianSigma, float gaborTao)
+	public void extractCuboidFeaturesFromVideo(File videoFile, float gaussianSigma, float gaborOmega)
 	{
-		if(videoFile == null || gaussianSigma <= 0 || gaborTao <= 0 || gaborTao >= 1)
+		if(videoFile == null || gaussianSigma <= 0 || gaborOmega <= 0 || gaborOmega >= 1)
 		{
 			return;
 		}
@@ -69,12 +69,12 @@ public class Cuboid
 			}
 		}
 		
-		extractCuboidFeaturesFromIplImage(processImageList, gaussianSigma, gaborTao, videoFile);
+		extractCuboidFeaturesFromIplImage(processImageList, gaussianSigma, gaborOmega, videoFile);
 	}
 	
-	public void extractCuboidFeaturesFromBmp(File bmpDir, float gaussianSigma, float gaborTao)
+	public void extractCuboidFeaturesFromBmp(File bmpDir, float gaussianSigma, float gaborOmega)
 	{
-		if(bmpDir == null || gaussianSigma <= 0 || gaborTao <= 0 || gaborTao >= 1)
+		if(bmpDir == null || gaussianSigma <= 0 || gaborOmega <= 0 || gaborOmega >= 1)
 		{
 			return;
 		}
@@ -97,6 +97,7 @@ public class Cuboid
 		IplImage gaussianImage = null;
 		List<IplImage> processImageList = new ArrayList<IplImage> ();
 		String path = bmpDir.getAbsolutePath() + "\\";
+
 		for(String fileName : fileNameList)
 		{
 			IplImage image = opencv_highgui.cvLoadImage(path + fileName);
@@ -108,15 +109,16 @@ public class Cuboid
 			opencv_imgproc.cvSmooth(grayFrame, gaussianImage, opencv_imgproc.CV_GAUSSIAN, 0, 0, gaussianSigma, gaussianSigma);
 			
 			processImageList.add(gaussianImage);
+			
 			grayFrame = null;
 		}
 		
-		extractCuboidFeaturesFromIplImage(processImageList, gaussianSigma, gaborTao, bmpDir);
+		extractCuboidFeaturesFromIplImage(processImageList, gaussianSigma, gaborOmega, bmpDir);
 	}
 	
-	private void extractCuboidFeaturesFromIplImage(List<IplImage> list, float gaussianSigma, float gaborTao, File videoFile)
+	private void extractCuboidFeaturesFromIplImage(List<IplImage> list, float gaussianSigma, float gaborOmega, File videoFile)
 	{
-		float[][][] response = cuboidResponse(list, gaborTao);
+		float[][][] response = cuboidResponse(list, gaborOmega);
 		list.clear();
 		List<int[]> maximaPosition = findMaxima(response);
 		response = null;
@@ -134,7 +136,7 @@ public class Cuboid
 			cuboidFeature.setPositionY(position[1]);
 			cuboidFeature.setPositionFrame(position[0]);
 			cuboidFeature.setSigma(gaussianSigma);
-			cuboidFeature.setTao(gaborTao);
+			cuboidFeature.setOmega(gaborOmega);
 			cuboidFeature.setCreateTime(new Date());
 			cuboidList.add(cuboidFeature);
 			i++;
@@ -152,7 +154,7 @@ public class Cuboid
 		}
 	}
 	
-	private float[][][] cuboidResponse(List<IplImage> gaussianList, double tao)
+	private float[][][] cuboidResponse(List<IplImage> gaussianList, double omega)
 	{
 		if(gaussianList == null || gaussianList.size() == 0)
 		{
@@ -165,8 +167,8 @@ public class Cuboid
 		
 		float[][][] response = new float[length][height][width];
 		
-		double[] gaborKernelEven = generateGaborKernel(true, tao);
-		double[] gaborKernelOdd = generateGaborKernel(false, tao);
+		double[] gaborKernelEven = generateGaborKernel(true, omega);
+		double[] gaborKernelOdd = generateGaborKernel(false, omega);
 		int kernelLength = gaborKernelEven.length;
 		
 		for(int i = 0; i < length; i++)
@@ -186,6 +188,12 @@ public class Cuboid
 					double convResultEven = 0;
 					double convResultOdd = 0;
 					int kernelI = kernelConvStartIndex;
+					
+					if(i == 17 && j == 364 && k == 157)
+					{
+						System.out.println();
+					}
+					
 					for(int imgI = imgConvStartIndex; imgI < imgConvEndIndex; imgI++)
 					{
 						byte pixel = gaussianList.get(imgI).arrayData().get(j * width + k);
@@ -216,14 +224,14 @@ public class Cuboid
 		{
 			for(int i = -length; i <= length; i++)
 			{
-				kernel[i + length] = -Math.cos(2 * Math.PI * omega * i) * Math.exp(-Math.pow(((double)i) / tao, 2));
+				kernel[i + length] = -Math.cos(2 * Math.PI * omega * i / 29) * Math.exp(-Math.pow(((double)i) / tao / 29, 2));
 			}
 		}
 		else
 		{
 			for(int i = -length; i <= length; i++)
 			{
-				kernel[i + length] = -Math.sin(2 * Math.PI * omega * i) * Math.exp(-Math.pow(((double)i) / tao, 2));
+				kernel[i + length] = -Math.sin(2 * Math.PI * omega * i / 29) * Math.exp(-Math.pow(((double)i) / tao / 29, 2));
 			}
 		}
 		
@@ -274,6 +282,38 @@ public class Cuboid
 					{
 						maximaPosition.add(new int[] {i + 1, j + 1, k + 1});
 					}
+					/*
+					else if(temp < response[i][j][k - 1] &&
+							temp < response[i][j][k + 1] &&
+							temp < response[i][j - 1][k - 1] &&
+							temp < response[i][j - 1][k] &&
+							temp < response[i][j - 1][k + 1] &&
+							temp < response[i][j + 1][k - 1] &&
+							temp < response[i][j + 1][k] &&
+							temp < response[i][j + 1][k + 1] &&
+							temp < response[i + 1][j + 1][k - 1] &&
+							temp < response[i + 1][j + 1][k] &&
+							temp < response[i + 1][j + 1][k + 1] &&
+							temp < response[i + 1][j - 1][k - 1] &&
+							temp < response[i + 1][j - 1][k] &&
+							temp < response[i + 1][j - 1][k + 1] &&
+							temp < response[i + 1][j][k - 1] &&
+							temp < response[i + 1][j][k] &&
+							temp < response[i + 1][j][k + 1] &&
+							temp < response[i - 1][j - 1][k - 1] &&
+							temp < response[i - 1][j - 1][k] &&
+							temp < response[i - 1][j - 1][k + 1] &&
+							temp < response[i - 1][j + 1][k - 1] &&
+							temp < response[i - 1][j + 1][k] &&
+							temp < response[i - 1][j + 1][k + 1] &&
+							temp < response[i - 1][j][k - 1] &&
+							temp < response[i - 1][j][k] &&
+							temp < response[i - 1][j][k + 1]
+					)
+					{
+						maximaPosition.add(new int[] {i + 1, j + 1, k + 1});
+					}
+					*/
 				}
 			}
 		}

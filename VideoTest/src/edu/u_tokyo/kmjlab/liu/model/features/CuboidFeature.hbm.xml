@@ -33,9 +33,9 @@
                 <comment>Gassian Sigma</comment>
             </column>
         </property>
-        <property name="tao" type="java.lang.Float">
-            <column name="TAO" precision="12" scale="0">
-                <comment>Gabor tao</comment>
+        <property name="omega" type="java.lang.Float">
+            <column name="OMEGA" precision="12" scale="0">
+                <comment>Gabor omega</comment>
             </column>
         </property>
     </class>

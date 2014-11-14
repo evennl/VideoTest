@@ -16,7 +16,7 @@ public class CuboidFeature
 	private String descriptor;
 	private Date createTime;
 	private Float sigma;
-	private Float tao;
+	private Float omega;
 
 	// Constructors
 
@@ -28,7 +28,7 @@ public class CuboidFeature
 	/** full constructor */
 	public CuboidFeature(Integer videoId, Integer positionX, Integer positionY,
 			Integer positionFrame, String descriptor, Date createTime,
-			Float sigma, Float tao)
+			Float sigma, Float omega)
 	{
 		this.videoId = videoId;
 		this.positionX = positionX;
@@ -37,7 +37,7 @@ public class CuboidFeature
 		this.descriptor = descriptor;
 		this.createTime = createTime;
 		this.sigma = sigma;
-		this.tao = tao;
+		this.omega = omega;
 	}
 
 	// Property accessors
@@ -122,14 +122,14 @@ public class CuboidFeature
 		this.sigma = sigma;
 	}
 
-	public Float getTao()
+	public Float getOmega()
 	{
-		return this.tao;
+		return this.omega;
 	}
 
-	public void setTao(Float tao)
+	public void setOmega(Float omega)
 	{
-		this.tao = tao;
+		this.omega = omega;
 	}
 
 }
