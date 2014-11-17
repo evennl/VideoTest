@@ -23,22 +23,19 @@ public class Main
 		final float gaussianSigma = 3f;
 		final float gaborOmega = 0.9f;
 		
-		//String bmpDir = "D:/test/test01/";
 		String bmpDir = "D:/cuts/jouon_08_44_06_44_15_resize/";
-		//String videoFullFileName = "D:/cuts/jouon_08_44_06_44_15.ts";
-		
 		File file = new File(bmpDir);
 		
 		
 		
 		//videoToBmp(videoFullFileName, bmpDir);
-		Cuboid cuboid = new Cuboid();
+		//Cuboid cuboid = new Cuboid();
 		//cuboid.extractCuboidFeaturesFromVideo(videoFullFileName, gaussianSigma, gaborOmega);
-		cuboid.extractCuboidFeaturesFromBmp(file, gaussianSigma, gaborOmega);
+		//cuboid.extractCuboidFeaturesFromBmp(file, gaussianSigma, gaborOmega);
 		
 		//File bmpDirDst = new File("D:/test/test01_mark/");
-		File bmpDirDst = new File("D:/cuts/jouon_08_44_06_44_15_resize_remark/");
-		addMarkToBmp(file, bmpDirDst);
+		File bmpDirDst = new File("D:/cuts/jouon_08_44_06_44_15_resize_foregroundmark/");
+		addMarkToBmp(file, bmpDirDst, true);
 	}
 	
 	
@@ -94,7 +91,7 @@ public class Main
 		closeGrabber(grabber);
 	}
 	
-	static private void addMarkToBmp(File bmpDirSrc, File bmpDirDst)
+	static private void addMarkToBmp(File bmpDirSrc, File bmpDirDst, boolean useBackgroundSubtraction)
 	{
 		if(bmpDirSrc == null || !bmpDirSrc.exists() || !bmpDirSrc.isDirectory() || bmpDirDst == null)
 		{
@@ -135,19 +132,35 @@ public class Main
 		
 		CuboidBu cuboidBu = new CuboidBu();
 		Integer videoId = VideoNameList.getId(bmpDirSrc.getName());
+		
+		
+		BackgroundSubtraction backgroundSubtraction = new BackgroundSubtraction(bmpDirSrc);
+		
 		for(i = 1; i < length; i++)
 		{
 			String fileName = fileNameList.get(i);
 			IplImage image = opencv_highgui.cvLoadImage(bmpSrcPath + fileName);
-			
+				
 			int frameNumber = Integer.parseInt(fileName.split("\\.")[0]);
 			List<CuboidFeature> list = cuboidBu.listByFrame(videoId, frameNumber);
 			
+			
+			if(useBackgroundSubtraction)
+			{
+				backgroundSubtraction.apply2();
+			}
+			
+				
 			if(list != null && list.size() > 0)
 			{
 				BytePointer bp = image.arrayData();
 				for(CuboidFeature feature : list)
 				{
+					if(useBackgroundSubtraction && !backgroundSubtraction.contain(feature))
+					{
+						continue;
+					}
+					
 					int index = ((feature.getPositionY() - 1) * width + feature.getPositionX() - 1) * 3;
 					bp.put(index, b0);
 					bp.put(index + 1, b0);
