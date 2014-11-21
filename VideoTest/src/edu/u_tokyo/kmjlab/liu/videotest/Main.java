@@ -23,7 +23,7 @@ public class Main
 		final float gaussianSigma = 3f;
 		final float gaborOmega = 0.9f;
 		
-		String bmpDir = "D:/cuts/jouon_08_44_06_44_15_resize/";
+		String bmpDir = "D:/cuts/jouon_08_42_16_42_32_resize/";
 		File file = new File(bmpDir);
 		
 		
@@ -34,7 +34,7 @@ public class Main
 		//cuboid.extractCuboidFeaturesFromBmp(file, gaussianSigma, gaborOmega);
 		
 		//File bmpDirDst = new File("D:/test/test01_mark/");
-		File bmpDirDst = new File("D:/cuts/jouon_08_44_06_44_15_resize_foregroundmark/");
+		File bmpDirDst = new File("D:/cuts/jouon_08_42_16_42_32_resize_foregroundmark/");
 		addMarkToBmp(file, bmpDirDst, true);
 	}
 	
