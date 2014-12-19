@@ -20,22 +20,22 @@ public class Main
 {
 	public static void main(String[] args)
 	{
-		final float gaussianSigma = 3f;
-		final float gaborOmega = 0.9f;
+		final float gaussianSigma = 3f;	// paper=3 whole action=16
+		final float gaborOmega = 0.9f;		// paper=0.9 whole action=0.48
 		
 		String bmpDir = "D:/cuts/jouon_08_42_16_42_32_resize/";
 		File file = new File(bmpDir);
 		
 		
-		
+		//String videoFullFileName = "D:/cuts/jouon_08_42_16_42_32.ts";
 		//videoToBmp(videoFullFileName, bmpDir);
 		//Cuboid cuboid = new Cuboid();
 		//cuboid.extractCuboidFeaturesFromVideo(videoFullFileName, gaussianSigma, gaborOmega);
 		//cuboid.extractCuboidFeaturesFromBmp(file, gaussianSigma, gaborOmega);
 		
 		//File bmpDirDst = new File("D:/test/test01_mark/");
-		File bmpDirDst = new File("D:/cuts/jouon_08_42_16_42_32_resize_foregroundmark/");
-		addMarkToBmp(file, bmpDirDst, true);
+		File bmpDirDst = new File("D:/cuts/jouon_08_42_16_42_32_resize_mark/");
+		addMarkToBmp(file, bmpDirDst, false);
 	}
 	
 	
@@ -138,7 +138,7 @@ public class Main
 		
 		for(i = 1; i < length; i++)
 		{
-			String fileName = fileNameList.get(i);
+			String fileName = fileNameList.get(i - 1);
 			IplImage image = opencv_highgui.cvLoadImage(bmpSrcPath + fileName);
 				
 			int frameNumber = Integer.parseInt(fileName.split("\\.")[0]);
