@@ -20,7 +20,7 @@ public class Main
 {
 	public static void main(String[] args)
 	{
-		final float gaussianSigma = 3f;	// paper=3 whole action=16
+		final float gaussianSigma = 3f;	// paper=3 window=17x17x27 whole action=16
 		final float gaborOmega = 0.9f;		// paper=0.9 whole action=0.48
 		
 		String bmpDir = "D:/cuts/jouon_08_42_16_42_32_resize/";
