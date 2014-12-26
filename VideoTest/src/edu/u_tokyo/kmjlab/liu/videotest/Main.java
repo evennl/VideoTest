@@ -20,7 +20,7 @@ public class Main
 {
 	public static void main(String[] args)
 	{
-		final float gaussianSigma = 3f;	// paper=3 window=17x17x27 whole action=16
+		final float gaussianSigma = 3f;	// window=17x17x27 paper=2 whole action=16
 		final float gaborOmega = 0.9f;		// paper=0.9 whole action=0.48
 		
 		String bmpDir = "D:/cuts/jouon_08_42_16_42_32_resize/";
@@ -29,9 +29,9 @@ public class Main
 		
 		//String videoFullFileName = "D:/cuts/jouon_08_42_16_42_32.ts";
 		//videoToBmp(videoFullFileName, bmpDir);
-		//Cuboid cuboid = new Cuboid();
+		Cuboid cuboid = new Cuboid();
 		//cuboid.extractCuboidFeaturesFromVideo(videoFullFileName, gaussianSigma, gaborOmega);
-		//cuboid.extractCuboidFeaturesFromBmp(file, gaussianSigma, gaborOmega);
+		cuboid.extractCuboidFeaturesFromBmp(file, gaussianSigma, gaborOmega);
 		
 		//File bmpDirDst = new File("D:/test/test01_mark/");
 		File bmpDirDst = new File("D:/cuts/jouon_08_42_16_42_32_resize_mark/");
