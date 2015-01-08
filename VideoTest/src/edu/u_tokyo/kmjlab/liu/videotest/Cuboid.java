@@ -23,7 +23,7 @@ public class Cuboid
 {
 	public void extractCuboidFeaturesFromVideo(File videoFile, float gaussianSigma, float gaborOmega)
 	{
-		if(videoFile == null || gaussianSigma <= 0 || gaborOmega <= 0 || gaborOmega >= 1)
+		if(videoFile == null || gaussianSigma <= 0 || gaborOmega <= 0)
 		{
 			return;
 		}
@@ -74,7 +74,7 @@ public class Cuboid
 	
 	public void extractCuboidFeaturesFromBmp(File bmpDir, float gaussianSigma, float gaborOmega)
 	{
-		if(bmpDir == null || gaussianSigma <= 0 || gaborOmega <= 0 || gaborOmega >= 1)
+		if(bmpDir == null || gaussianSigma <= 0 || gaborOmega <= 0)
 		{
 			return;
 		}
@@ -210,7 +210,7 @@ public class Cuboid
 	
 	private double[] generateGaborKernel(boolean isEven, double omega)
 	{
-		if(omega <= 0 || omega >= 1)
+		if(omega <= 0)
 		{
 			return null;
 		}
