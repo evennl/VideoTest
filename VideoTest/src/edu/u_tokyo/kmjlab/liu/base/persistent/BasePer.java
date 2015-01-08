@@ -425,4 +425,24 @@ public class BasePer<T>
 			}
     	}
     }
+    
+    public void truncate(String tablename)
+    {
+    	session = HibernateSessionFactory.getSession();
+    	Transaction tx = session.beginTransaction();
+    	try
+    	{
+    		session.createSQLQuery("truncate table " + tablename).executeUpdate();  
+    		tx.commit();  
+    	}
+    	catch (Exception e)
+    	{  
+    		e.printStackTrace();
+    		HibernateSessionFactory.RollbackTransaction();
+    	}
+    	finally
+    	{  
+    		HibernateSessionFactory.closeSession();
+    	}
+    }
 }

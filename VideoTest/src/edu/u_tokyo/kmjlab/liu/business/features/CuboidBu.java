@@ -78,4 +78,10 @@ public class CuboidBu extends BaseBusiness<CuboidFeature>
 		
 		return basePer.getList(criteria); 
 	}
+	
+	
+	public void truncate()
+	{
+		basePer.truncate("cuboid_feature");
+	}
 }

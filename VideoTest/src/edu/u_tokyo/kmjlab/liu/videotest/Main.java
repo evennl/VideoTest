@@ -20,8 +20,8 @@ public class Main
 {
 	public static void main(String[] args)
 	{
-		final float gaussianSigma = 3f;	// window=17x17x27 paper=2 whole action=16
-		final float gaborOmega = 0.9f;		// paper=0.9 whole action=0.48
+		final float gaussianSigma = 8f;	// window=17x17x27 paper=2 whole action=16
+		final float gaborOmega = 3f;		// paper=0.9 whole action=0.48
 		
 		String bmpDir = "D:/cuts/jouon_08_42_16_42_32_resize/";
 		File file = new File(bmpDir);
@@ -30,11 +30,42 @@ public class Main
 		//String videoFullFileName = "D:/cuts/jouon_08_42_16_42_32.ts";
 		//videoToBmp(videoFullFileName, bmpDir);
 		Cuboid cuboid = new Cuboid();
-		//cuboid.extractCuboidFeaturesFromVideo(videoFullFileName, gaussianSigma, gaborOmega);
-		cuboid.extractCuboidFeaturesFromBmp(file, gaussianSigma, gaborOmega);
+		cuboid.extractCuboidFeaturesFromBmp(file, gaussianSigma, 4f);
+		File bmpDirDst = new File("D:/cuts/jouon_08_42_16_42_32_resize_mark05/");
+		addMarkToBmp(file, bmpDirDst, false);
 		
-		//File bmpDirDst = new File("D:/test/test01_mark/");
-		File bmpDirDst = new File("D:/cuts/jouon_08_42_16_42_32_resize_mark/");
+		
+		cuboid.extractCuboidFeaturesFromBmp(file, gaussianSigma, 5f);
+		bmpDirDst = new File("D:/cuts/jouon_08_42_16_42_32_resize_mark06/");
+		addMarkToBmp(file, bmpDirDst, false);
+		
+		
+		cuboid.extractCuboidFeaturesFromBmp(file, gaussianSigma, 6f);
+		bmpDirDst = new File("D:/cuts/jouon_08_42_16_42_32_resize_mark07/");
+		addMarkToBmp(file, bmpDirDst, false);
+		
+		
+		cuboid.extractCuboidFeaturesFromBmp(file, gaussianSigma, 7f);
+		bmpDirDst = new File("D:/cuts/jouon_08_42_16_42_32_resize_mark08/");
+		addMarkToBmp(file, bmpDirDst, false);
+		
+		
+		cuboid.extractCuboidFeaturesFromBmp(file, gaussianSigma, 8f);
+		bmpDirDst = new File("D:/cuts/jouon_08_42_16_42_32_resize_mark09/");
+		addMarkToBmp(file, bmpDirDst, false);
+		
+		
+		cuboid.extractCuboidFeaturesFromBmp(file, gaussianSigma, 9f);
+		bmpDirDst = new File("D:/cuts/jouon_08_42_16_42_32_resize_mark10/");
+		addMarkToBmp(file, bmpDirDst, false);
+		
+		
+		cuboid.extractCuboidFeaturesFromBmp(file, gaussianSigma, 10f);
+		bmpDirDst = new File("D:/cuts/jouon_08_42_16_42_32_resize_mark11/");
+		addMarkToBmp(file, bmpDirDst, false);
+		
+		cuboid.extractCuboidFeaturesFromBmp(file, gaussianSigma, 11f);
+		bmpDirDst = new File("D:/cuts/jouon_08_42_16_42_32_resize_mark12/");
 		addMarkToBmp(file, bmpDirDst, false);
 	}
 	
@@ -169,6 +200,10 @@ public class Main
 			}
 			opencv_highgui.cvSaveImage(bmpDstPath + fileName, image);
 		}
+		
+		
+		cuboidBu = new CuboidBu();
+		cuboidBu.truncate();
 	}
 	
 	
