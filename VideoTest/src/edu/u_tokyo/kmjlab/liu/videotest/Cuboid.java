@@ -231,7 +231,7 @@ public class Cuboid
 		{
 			for(int i = -length; i <= length; i++)
 			{
-				kernel[i + length] = -Math.sin(2 * Math.PI * omega * i / 29) * Math.exp(-Math.pow(((double)i) / tao / 29, 2));
+				kernel[i + length] = -Math.sin(2 * Math.PI * omega * i) * Math.exp(-Math.pow(((double)i) / tao, 2));
 			}
 		}
 		
