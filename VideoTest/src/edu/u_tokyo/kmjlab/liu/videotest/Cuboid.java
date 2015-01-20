@@ -189,11 +189,6 @@ public class Cuboid
 					double convResultOdd = 0;
 					int kernelI = kernelConvStartIndex;
 					
-					if(i == 17 && j == 364 && k == 157)
-					{
-						System.out.println();
-					}
-					
 					for(int imgI = imgConvStartIndex; imgI < imgConvEndIndex; imgI++)
 					{
 						byte pixel = gaussianList.get(imgI).arrayData().get(j * width + k);
