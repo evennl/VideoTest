@@ -23,7 +23,7 @@
             <column name="POSITION_FRAME" />
         </property>
         <property name="descriptor" type="java.lang.String">
-            <column name="DESCRIPTOR" length="1024" />
+            <column name="DESCRIPTOR" length="2048" />
         </property>
         <property name="createTime" type="java.util.Date">
             <column name="CREATE_TIME" length="19" />
