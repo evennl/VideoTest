@@ -14,22 +14,19 @@ import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 
-import org.bytedeco.javacpp.opencv_highgui;
-import org.bytedeco.javacpp.opencv_core.IplImage;
-
 public class CutImages
 {
 	public static void main(String[] args) throws FileNotFoundException
 	{
-		String path = "D:/1/";
+		String path = "D:/cuts/1/";
 		File dir = new File(path);
 		String[] fileNameList = dir.list();
 		
-		int x = 112, y = 95, w = 88, h = 145;
+		//int x = 38, y = 31, w = 21, h = 41;
+		int x = 28, y = 16, w = 41, h = 101;
 		Iterator<ImageReader> iterator = ImageIO.getImageReadersByFormatName("bmp");
         ImageReader reader = (ImageReader)iterator.next();
         
-        int i = 1;
 		for(String fileName : fileNameList)
 		{
 			String src = path + fileName;
@@ -50,13 +47,7 @@ public class CutImages
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}  
-			i++;
+			}
 		}
-		
-		
-		
-		
-        
 	}
 }

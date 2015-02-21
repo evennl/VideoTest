@@ -2,21 +2,19 @@ package edu.u_tokyo.kmjlab.liu.videoquery;
 
 import java.util.List;
 
+import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.opencv_core.IplImage;
+
+import Jama.Matrix;
 
 // size = 7 x 7 x 3
 public class StPatch
 {
-	private static final int PATCH_WIDTH = 7;
-	private static final int PATCH_HEIGHT = 7;
-	private static final int PATCH_LENGTH = 3;
+	public static final int PATCH_WIDTH = 7;
+	public static final int PATCH_HEIGHT = 7;
+	public static final int PATCH_LENGTH = 3;
 	
-	public static void main(String[] args)
-	{
-		
-	}
-	
-	public double[][] generateGradientMatrix(List<IplImage> list, int x, int y, int frame)
+	public Matrix generateGramMatrix(List<IplImage> list, int x, int y, int frame)
 	{
 		if(list == null || list.size() == 0 || x <= 0 || y <= 0 || frame <= 0)
 		{
@@ -32,31 +30,37 @@ public class StPatch
 		}
 		
 		int matrixHeight = PATCH_WIDTH * PATCH_HEIGHT * PATCH_LENGTH;
-		double[][] gradientMatrix = new double[3][matrixHeight];
+		double[][] gradientMatrix = new double[matrixHeight][3];
 		int matrixColumn = 0;
 		for(int k = 0; k < PATCH_LENGTH; k++)
 		{
 			IplImage image = list.get(frame + k);
 			IplImage prevImage = list.get(frame + k - 1);
 			IplImage nextImage = list.get(frame + k + 1);
-			for(int i = 0; i < PATCH_WIDTH; i++)
+			BytePointer data = image.arrayData();
+			
+			for(int j = 0; j < PATCH_HEIGHT; j++)
 			{
-				for(int j = 0; j < PATCH_HEIGHT; j++)
+				for(int i = 0; i < PATCH_WIDTH; i++)
 				{
-					int pixel = (image.arrayData().get(i * width + j) & 0xFF);
+					int leftPixel = (data.get((y + j) * width + x + i - 1)) & 0xFF;
+					int rightPixel = (data.get((y + j) * width + x + i + 1)) & 0xFF;
 					
-					int leftPixel = (image.arrayData().get(i * width + j - 1) & 0xFF);
-					int rightPixel = (image.arrayData().get(i * width + j + 1) & 0xFF);
+					int upPixel = (data.get((y + j - 1) * width + x + i)) & 0xFF;
+					int downPixel = (data.get((y + j + 1) * width + x + i)) & 0xFF;
 					
-					int upPixel = (image.arrayData().get((i - 1) * width + j) & 0xFF);
-					int downPixel = (image.arrayData().get((i + 1) * width + j) & 0xFF);
+					int prevPixel = (prevImage.arrayData().get((y + j) * width + x + i) & 0xFF);
+					int nextPixel = (nextImage.arrayData().get((y + j) * width + x + i) & 0xFF);
 					
-					int prevPixel = (prevImage.arrayData().get(i * width + j) & 0xFF);
-					int nextPixel = (nextImage.arrayData().get(i * width + j) & 0xFF);
+					gradientMatrix[matrixColumn][0] = rightPixel - leftPixel;
+					gradientMatrix[matrixColumn][1] = downPixel - upPixel;
+					gradientMatrix[matrixColumn][2] = nextPixel - prevPixel;
+					matrixColumn++;
 				}
 			}
 		}
-		
-		return null;
+		Matrix gMatrix = new Matrix(gradientMatrix);
+		Matrix m = gMatrix.transpose().times(gMatrix);
+		return m;
 	}
 }

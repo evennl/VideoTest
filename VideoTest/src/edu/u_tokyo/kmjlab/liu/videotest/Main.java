@@ -23,12 +23,13 @@ public class Main
 		final float gaussianSigma = 8f;	// window=17x17x27 paper=2 whole action=16
 		final float gaborOmega = 3f;		// paper=0.9 whole action=0.48
 		
-		String bmpDir = "D:/cuts/jouon_08_42_16_42_32_resize/";
+		String bmpDir = "D:/cuts/ballet_result/";
 		File file = new File(bmpDir);
 		
 		
-		//String videoFullFileName = "D:/cuts/jouon_08_42_16_42_32.ts";
-		//videoToBmp(videoFullFileName, bmpDir);
+		String videoFullFileName = "D:/cuts/ballet_result.mpg";
+		videoToBmp(videoFullFileName, bmpDir);
+		/*
 		Cuboid cuboid = new Cuboid();
 		cuboid.extractCuboidFeaturesFromBmp(file, gaussianSigma, 4f);
 		File bmpDirDst = new File("D:/cuts/jouon_08_42_16_42_32_resize_mark05/");
@@ -67,6 +68,7 @@ public class Main
 		cuboid.extractCuboidFeaturesFromBmp(file, gaussianSigma, 11f);
 		bmpDirDst = new File("D:/cuts/jouon_08_42_16_42_32_resize_mark12/");
 		addMarkToBmp(file, bmpDirDst, false);
+		*/
 	}
 	
 	
