@@ -1,5 +1,6 @@
 package edu.u_tokyo.kmjlab.liu.videoquery;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,6 +14,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 
 import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.opencv_core;
@@ -31,7 +34,7 @@ public class Video
 	public int width;
 	public int height;
 	
-	private static final double THRESHOLD = 0.89;
+	private static final double THRESHOLD = 0.8;
 	
 	public Video(String path)
 	{
@@ -63,14 +66,14 @@ public class Video
 	
 	
 	
-	public static void main(String[] args)
+	public static void main(String[] args) throws IOException
 	{
-		Video video = new Video("D:/cuts/5/");
+		Video video = new Video("D:/cuts/1/");
 		Template template = new Template("D:/cuts/2/");
 		
 		video.findMatchedArea(template);
 		double[][][] consistency = video.inputConsistency("D:/1.txt");
-		video.drawColor(consistency, "D:/cuts/color2/", "D:/cuts/draw2/", template);
+		video.drawColor(consistency, "D:/cuts/color/", "D:/cuts/draw/", template);
 		//video.draw(consistency, "D:/result2/", template);
 	}
 	
@@ -370,7 +373,7 @@ public class Video
 		}
 	}
 	
-	public void drawColor(double[][][] consistency, String colorDir, String drawDir, Template template)
+	public void drawColor(double[][][] consistency, String colorDir, String drawDir, Template template) throws IOException
 	{
 		File path = new File(drawDir);
 		if(!path.exists())
@@ -398,7 +401,8 @@ public class Video
 				}
 			}
 		}
-		double threshold = maximum * THRESHOLD;
+		//double threshold = maximum * THRESHOLD;
+		double threshold = minimum + (maximum - minimum) * THRESHOLD;
 		byte b255 = (byte) 255;
 		byte b0 = (byte) 0;
 		
@@ -416,25 +420,24 @@ public class Video
 		
 		
 		
-		List<IplImage> colorList = new ArrayList<IplImage>(fileNameList.size());
+		List<BufferedImage> colorList = new ArrayList<BufferedImage>(fileNameList.size());
 		
 		for(String fileName : fileNameList)
 		{
-			IplImage image = opencv_highgui.cvLoadImage(colorDir + fileName);
+			BufferedImage image = ImageIO.read(new File(colorDir + fileName));
 			colorList.add(image);
 		}
-		IplImage firstImage = colorList.get(0);
-		int bigWidth = firstImage.width();
+		BufferedImage firstImage = colorList.get(0);
+		int bigWidth = firstImage.getWidth();
 		
 		
 		for(int k = 0; k < length; k++)
 		{
-			if(k + template.length / 2 >= colorList.size())
+			if(k + template.length / 2 >= length)
 			{
 				break;
 			}
-			IplImage image = colorList.get(k + template.length / 2);
-			BytePointer data = image.arrayData();
+			BufferedImage image = colorList.get(k + template.length / 2);
 			
 			for(int j = 0; j < height; j++)
 			{
@@ -453,11 +456,8 @@ public class Video
 							s_height = height - 1;
 						}
 						s_height += 16;
-						s_width += 40;
-						int index = s_height * (bigWidth) + s_width;
-						data.put(index * 3 + j, b0);
-						data.put(index * 3 + j + 1, b0);
-						data.put(index * 3 + j + 2, b255);
+						s_width += 28;
+						image.setRGB(s_width, s_height, 16711680);
 					}
 				}
 			}
@@ -465,8 +465,8 @@ public class Video
 
 		for(int i = 0; i < colorList.size(); i++)
 		{
-			IplImage image = colorList.get(i);
-			opencv_highgui.cvSaveImage(drawDir + i + ".bmp", image);
+			BufferedImage image = colorList.get(i);
+			ImageIO.write(image, "bmp", new File(drawDir + i + ".bmp"));
 		}
 	}
 }
