@@ -2,6 +2,9 @@ package edu.u_tokyo.kmjlab.liu.videoquery;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +13,8 @@ import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacpp.opencv_highgui;
 import org.bytedeco.javacpp.opencv_imgproc;
 import org.bytedeco.javacpp.opencv_core.IplImage;
+
+import edu.u_tokyo.kmjlab.liu.videotest.BmpFilter;
 
 import Jama.Matrix;
 
@@ -24,8 +29,16 @@ public class Template
 	public Template(String path)
 	{
 		File dir = new File(path);
-		String[] fileNameList = dir.list();
-		list = new ArrayList<IplImage>(fileNameList.length);
+		List<String> fileNameList = Arrays.asList(dir.list(new BmpFilter()));
+		Collections.sort(fileNameList, new Comparator<String>()
+		{
+		    @Override
+		    public int compare(String fileName1, String fileName2)
+		    {
+		        return fileName1.toLowerCase().compareTo(fileName2.toLowerCase());
+		    }
+		});
+		list = new ArrayList<IplImage>(fileNameList.size());
 		
 		for(String fileName : fileNameList)
 		{
@@ -35,7 +48,7 @@ public class Template
 			list.add(grayFrame);
 		}
 		length = list.size();
-		IplImage firstTemplateImage = opencv_highgui.cvLoadImage(path + fileNameList[0]);
+		IplImage firstTemplateImage = opencv_highgui.cvLoadImage(path + fileNameList.get(0));
 		width = firstTemplateImage.width();
 		height = firstTemplateImage.height();
 	}
