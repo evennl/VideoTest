@@ -18,7 +18,7 @@ public class CutImages
 {
 	public static void main(String[] args) throws FileNotFoundException
 	{
-		String path = "D:/cuts/1/";
+		String path = "D:/cuts/6/";
 		File dir = new File(path);
 		String[] fileNameList = dir.list();
 		

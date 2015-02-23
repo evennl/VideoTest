@@ -31,7 +31,7 @@ public class Video
 	public int width;
 	public int height;
 	
-	private static final double THRESHOLD = 0.8;
+	private static final double THRESHOLD = 0.89;
 	
 	public Video(String path)
 	{
@@ -65,44 +65,13 @@ public class Video
 	
 	public static void main(String[] args)
 	{
-		Video video = new Video("D:/cuts/1/");
+		Video video = new Video("D:/cuts/5/");
 		Template template = new Template("D:/cuts/2/");
 		
-		/*
-		double[][][] consistency = new double[3][3][3];
-		int counter = 1;
-		for(int k = 0; k < 3; k++)
-		{
-			for(int j = 0; j < 3; j++)
-			{
-				for(int i = 0; i < 3; i++)
-				{
-					consistency[k][j][i] = counter++;
-				}
-			}
-		}
-		
-		video.outputConsistency(consistency, "D:/2.txt");
-		
-		for(int k = 0; k < 3; k++)
-		{
-			for(int j = 0; j < 3; j++)
-			{
-				for(int i = 0; i < 3; i++)
-				{
-					System.out.print(consistency[k][j][i] + ", ");
-				}
-				System.out.println();
-			}
-			System.out.println();
-			System.out.println();
-		}
-		*/
+		video.findMatchedArea(template);
 		double[][][] consistency = video.inputConsistency("D:/1.txt");
+		video.drawColor(consistency, "D:/cuts/color2/", "D:/cuts/draw2/", template);
 		//video.draw(consistency, "D:/result2/", template);
-		video.drawColor(consistency, "D:/cuts/color/", "D:/cuts/draw/", template);
-		
-		//video.findMatchedArea(template);
 	}
 	
 	
@@ -187,26 +156,7 @@ public class Video
 			}
 		}
 		outputConsistency(consistency, "D:/1.txt");
-		double threshold = minimum + (maximum - minimum) * THRESHOLD;
-		byte b255 = (byte) 255;
-		
-		for(int k = 0; k < length; k++)
-		{
-			IplImage image = list.get(k);
-			BytePointer data = image.arrayData();
-			
-			for(int j = 0; j < height; j++)
-			{
-				for(int i = 0; i < width; i++)
-				{
-					if(consistency[k][j][i] > threshold)
-					{
-						data.put(j * width + i, b255);  
-					}
-				}
-			}
-			opencv_highgui.cvSaveImage("D:/result/" + k + ".bmp", image);
-		}
+		System.out.println(minimum + ":" + maximum);
 	}
 	
 	public void outputConsistency(double[][][] consistency, String path)
@@ -375,7 +325,7 @@ public class Video
 				}
 			}
 		}
-		double threshold = maximum * 0.89;
+		double threshold = maximum * THRESHOLD;
 		byte b255 = (byte) 255;
 		
 		for(int k = 0; k < length; k++)
@@ -448,7 +398,7 @@ public class Video
 				}
 			}
 		}
-		double threshold = maximum * 0.89;
+		double threshold = maximum * THRESHOLD;
 		byte b255 = (byte) 255;
 		byte b0 = (byte) 0;
 		
@@ -486,28 +436,6 @@ public class Video
 			IplImage image = colorList.get(k + template.length / 2);
 			BytePointer data = image.arrayData();
 			
-			/*
-			int index = (bigWidth) - 1;
-			data.put(index * 3, b0);
-			data.put(index * 3 + 1, b0);
-			data.put(index * 3 + 2, b255);
-			
-			index = (bigWidth);
-			data.put(index * 3 + 1, b0);
-			data.put(index * 3 + 2, b0);
-			data.put(index * 3 + 3, b255);
-			
-			index = (bigWidth) + 1;
-			data.put(index * 3 + 1, b0);
-			data.put(index * 3 + 2, b0);
-			data.put(index * 3 + 3, b255);
-			
-			index = (bigWidth) + 2;
-			data.put(index * 3 + 1, b0);
-			data.put(index * 3 + 2, b0);
-			data.put(index * 3 + 3, b255);
-			*/
-			
 			for(int j = 0; j < height; j++)
 			{
 				for(int i = 0; i < width; i++)
@@ -533,7 +461,6 @@ public class Video
 					}
 				}
 			}
-			
 		}
 
 		for(int i = 0; i < colorList.size(); i++)
