@@ -17,7 +17,6 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacpp.opencv_highgui;
 import org.bytedeco.javacpp.opencv_imgproc;
@@ -64,28 +63,21 @@ public class Video
 		height = firstImage.height();
 	}
 	
-	
-	
 	public static void main(String[] args) throws IOException
 	{
-		Video video = new Video("D:/cuts/1/");
+		Video video = new Video("D:/cuts/6/");
 		Template template = new Template("D:/cuts/2/");
 		
 		video.findMatchedArea(template);
 		double[][][] consistency = video.inputConsistency("D:/1.txt");
-		video.drawColor(consistency, "D:/cuts/color/", "D:/cuts/draw/", template);
-		//video.draw(consistency, "D:/result2/", template);
+		video.drawColor(consistency, "D:/cuts/color3/", "D:/cuts/draw3/", template);
 	}
-	
-	
-	
 	
 	private Matrix generateGramMatrix(int x, int y, int frame)
 	{
 		StPatch stPatch = new StPatch();
 		return stPatch.generateGramMatrix(list, x, y, frame);
 	}
-	
 	
 	private double getConsistency(int x, int y, int frame, Template template)
 	{
@@ -225,7 +217,6 @@ public class Video
         }
 	}
 	
-	
 	public double[][][] inputConsistency(String path)
 	{
 		double[][][] consistency = new double[length][height][width];
@@ -300,79 +291,6 @@ public class Video
         return consistency;
 	}
 	
-	public void draw(double[][][] consistency, String dir, Template template)
-	{
-		File path = new File(dir);
-		if(!path.exists())
-		{
-			path.mkdirs();
-		}
-		
-		double maximum = 0;
-		double minimum = Double.MAX_VALUE;
-		
-		for(int k = 0; k < length; k++)
-		{
-			for(int j = 0; j < height; j++)
-			{
-				for(int i = 0; i < width; i++)
-				{
-					if(consistency[k][j][i] > maximum)
-					{
-						maximum = consistency[k][j][i];
-					}
-					if(consistency[k][j][i] > 0 && consistency[k][j][i] < minimum)
-					{
-						minimum = consistency[k][j][i];
-					}
-				}
-			}
-		}
-		double threshold = maximum * THRESHOLD;
-		byte b255 = (byte) 255;
-		
-		for(int k = 0; k < length; k++)
-		{
-			
-			if(k + template.length / 2 >= list.size())
-			{
-				break;
-			}
-			IplImage image = list.get(k + template.length / 2);
-			BytePointer data = image.arrayData();
-			
-			for(int j = 0; j < height; j++)
-			{
-				for(int i = 0; i < width; i++)
-				{
-					if(consistency[k][j][i] > threshold)
-					{
-						int s_height = j + template.height / 2;
-						int s_width = i + template.width / 2;
-						if(s_width >= width)
-						{
-							s_width = width - 1;
-						}
-						if(s_height >= height)
-						{
-							s_height = height - 1;
-						}
-						int index = s_height * (width + 3) + s_width;
-						data.put(index, b255);
-					}
-				}
-			}
-		}
-		
-		
-		
-		for(int i = 0; i < list.size(); i++)
-		{
-			IplImage image = list.get(i);
-			opencv_highgui.cvSaveImage(dir + i + ".bmp", image);
-		}
-	}
-	
 	public void drawColor(double[][][] consistency, String colorDir, String drawDir, Template template) throws IOException
 	{
 		File path = new File(drawDir);
@@ -403,8 +321,7 @@ public class Video
 		}
 		//double threshold = maximum * THRESHOLD;
 		double threshold = minimum + (maximum - minimum) * THRESHOLD;
-		byte b255 = (byte) 255;
-		byte b0 = (byte) 0;
+		final int redColor = 16711680;
 		
 		
 		File colorPath = new File(colorDir);
@@ -418,8 +335,6 @@ public class Video
 		    }
 		});
 		
-		
-		
 		List<BufferedImage> colorList = new ArrayList<BufferedImage>(fileNameList.size());
 		
 		for(String fileName : fileNameList)
@@ -427,9 +342,6 @@ public class Video
 			BufferedImage image = ImageIO.read(new File(colorDir + fileName));
 			colorList.add(image);
 		}
-		BufferedImage firstImage = colorList.get(0);
-		int bigWidth = firstImage.getWidth();
-		
 		
 		for(int k = 0; k < length; k++)
 		{
@@ -447,17 +359,10 @@ public class Video
 					{
 						int s_height = j + template.height / 2;
 						int s_width = i + template.width / 2;
-						if(s_width >= width)
-						{
-							s_width = width - 1;
-						}
-						if(s_height >= height)
-						{
-							s_height = height - 1;
-						}
+
 						s_height += 16;
 						s_width += 28;
-						image.setRGB(s_width, s_height, 16711680);
+						image.setRGB(s_width, s_height, redColor);
 					}
 				}
 			}
