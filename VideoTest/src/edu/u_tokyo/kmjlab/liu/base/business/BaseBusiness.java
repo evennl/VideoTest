@@ -138,6 +138,19 @@ public class BaseBusiness<T>
 		return null;
 	}
 	
+	public T get(Integer id)
+	{
+		if(id != null)
+		{
+			Criteria criteria = basePer.getNewCriteria();
+			Criterion likeCri = Restrictions.eq("id", id);
+			criteria.add(likeCri);
+			criteria.setCacheable(cacheable);
+			return basePer.get(criteria);
+		}
+		return null;
+	}
+	
 	public T get(String id)
 	{
 		if(id != null)

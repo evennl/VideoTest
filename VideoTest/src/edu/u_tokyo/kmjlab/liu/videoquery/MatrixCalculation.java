@@ -1,27 +1,33 @@
 package edu.u_tokyo.kmjlab.liu.videoquery;
 
+import edu.u_tokyo.kmjlab.liu.model.videoquery.GramMatrix;
 import Jama.Matrix;
 
 public class MatrixCalculation
 {
-	static public double getInconsistency(Matrix m1, Matrix m2)
+	static public float getInconsistency(GramMatrix m1, GramMatrix m2)
 	{
 		if(m1 == null || m2 == null)
 		{
 			return 100000;
 		}
-		if(m1.getRowDimension() != 3 || m1.getColumnDimension() != 3 || m2.getRowDimension() != 3 || m2.getColumnDimension() != 3)
-		{
-			return 100000;
-		}
+
+		double[][] m12Array = new double [3][3];
+		m12Array[0][0] = m1.getM11() + m2.getM11();
+		m12Array[0][1] = m1.getM12() + m2.getM12();
+		m12Array[0][2] = m1.getM13() + m2.getM13();
+		m12Array[1][0] = m1.getM21() + m2.getM21();
+		m12Array[1][1] = m1.getM22() + m2.getM22();
+		m12Array[1][2] = m1.getM23() + m2.getM23();
+		m12Array[2][0] = m1.getM31() + m2.getM31();
+		m12Array[2][1] = m1.getM32() + m2.getM32();
+		m12Array[2][2] = m1.getM33() + m2.getM33();
 		
-		Matrix m12 = m1.plus(m2);
+		Matrix m12 = new Matrix(m12Array);
 		
-		double rankIncrease1 = getRankIncrease(m1);
-		double rankIncrease2 = getRankIncrease(m2);
-		double rankIncrease12 = getRankIncrease(m12);
+		float rankIncrease12 = getRankIncrease(m12);
 		
-		double min = Math.min(rankIncrease1, rankIncrease2);
+		float min = Math.min(m1.getRankIncrease(), m2.getRankIncrease());
 		if(min == 0)
 		{
 			return 100000000;
@@ -31,7 +37,7 @@ public class MatrixCalculation
 	}
 	
 	
-	static private double getRankIncrease(Matrix m)
+	static public float getRankIncrease(Matrix m)
 	{
 		if(m == null)
 		{
@@ -52,6 +58,6 @@ public class MatrixCalculation
 			return 100000000;
 		}
 		
-		return det / (detSub * normF);
+		return (float)(det / (detSub * normF));
 	}
 }
